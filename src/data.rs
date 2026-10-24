@@ -197,7 +197,7 @@ pub fn append_score(path: &str, record: &ScoreRecord) -> bool {
 pub fn load_scores(path: &str) -> Vec<ScoreRecord> {
     let text = match fs::read_to_string(path) {
         Ok(t) => t,
-        Err(_) => return Vec::new();
+        Err(_) => return Vec::new(),
     };
     let mut records = Vec::new();
     for line in text.lines() {
