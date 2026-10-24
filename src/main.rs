@@ -66,11 +66,14 @@ fn play_game(fleet: &[ShipSpec]) {
 
 // An unscored game on the fixed layout in the practice file.
 fn practice_game() {
-    // TODO (Task 8): load the board with data::load_board(PRACTICE_PATH). On
-    // Some(mut board), play it with play_round and print
-    // "Practice board cleared in N shots." when play_round returns Some(N).
-    // On None, print "Practice board unavailable."
-    println!("Practice mode is not available yet.");
+    match data::load_board(PRACTICE_PATH) {
+        Some(mut board) => {
+            if let Some(shots) = play_round(&mut board) {
+                println!("Practice board cleared in {shots} shots. Practice is not scored.");
+            }
+        }
+        None => println!("Practice board unavailable."),
+    }
 }
 
 // Fire until every ship is sunk. Returns the number of shots, or None if the
