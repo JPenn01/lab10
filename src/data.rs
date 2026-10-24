@@ -1,5 +1,7 @@
-// Loading and saving game data.
-use crate::board::Board;
+// Loading and saving game data
+use crate::board::{self, Board, Cell, SIZE};
+use std::fs::{self, OpenOptions};
+use std::io::Write;
 
 pub const MIN_SHIP: usize = 2;
 pub const MAX_SHIP: usize = 5;
