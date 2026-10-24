@@ -64,18 +64,18 @@ pub fn sort_scores_desc(records: &mut Vec<ScoreRecord>) {
 pub fn parse_ship_line(line: &str) -> Option<ShipSpec> {
     let parts: Vec<&str> = line.trim().split(',').collect();
     if parts.len() != 2 {
-        return None;                      // not exactly one comma
+        return None;
     }
     let name = parts[0].trim();
     if name.is_empty() {
-        return None;                      // empty name
+        return None;
     }
     match parts[1].trim().parse::<usize>() {
         Ok(length) if length >= MIN_SHIP && length <= MAX_SHIP => Some(ShipSpec {
             name: name.to_string(),
             length,
         }),
-        _ => None,                        // not a number, or out of range
+        _ => None,
     }
 }
 
@@ -86,8 +86,30 @@ pub fn parse_ship_line(line: &str) -> Option<ShipSpec> {
 //     Skipped N invalid line(s) in <path>
 // to stderr (eprintln!). If the file cannot be read, print the error to
 // stderr and return an empty Vec.
-pub fn load_fleet(_path: &str) -> Vec<ShipSpec> {
-    todo!("Task 2: load_fleet")
+pub fn load_fleet(path: &str) -> Vec<ShipSpec> {
+    let text = match fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(e) => {
+            eprintln!("Cannot read {}: {}", path, e);
+            return Vec::new();
+        }
+    };
+    let mut fleet = Vec::new();
+    let mut skipped = 0;
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        match parse_ship_line(line) {
+            Some(ship) => fleet.push(ship),
+            None => skipped += 1,
+        }
+    }
+    if skipped > 0 {
+        eprintln!("Skipped {} invalid line(s) in {}", skipped, path);
+    }
+    fleet
 }
 
 // Task 3.
