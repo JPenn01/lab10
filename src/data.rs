@@ -170,8 +170,22 @@ pub fn load_board(path: &str) -> Option<Board> {
 // Replace commas in the name with spaces so the line stays parseable.
 // Return true if the write succeeded; on failure print the error to stderr
 // and return false.
-pub fn append_score(_path: &str, _record: &ScoreRecord) -> bool {
-    todo!("Task 6: append_score")
+pub fn append_score(path: &str, record: &ScoreRecord) -> bool {
+    let name = record.name.replace(',', " ");
+    let file = OpenOptions::new().create(true).append(true).open(path);
+    match file {
+        Ok(mut f) => match writeln!(f, "{},{}", name, record.score) {
+            Ok(_) => true,
+            Err(e) => {
+                eprintln!("Cannot write {}: {}", path, e);
+                false
+            }
+        },
+        Err(e) => {
+            eprintln!("Cannot open {}: {}", path, e);
+            false
+        }
+    }
 }
 
 // Task 7.
